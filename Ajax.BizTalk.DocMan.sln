@@ -14,6 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{B78E7C1A-2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ajax.BizTalk.DocMan.Pipelines", "Ajax.BizTalk.DocMan.Pipelines\Ajax.BizTalk.DocMan.Pipelines.btproj", "{4EE3F58D-843C-4828-8680-E2137A1736B4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{7A330276-9B95-4EC3-A391-224D56F9CD33}"
+	ProjectSection(SolutionItems) = preProject
+		SolutionItems\Ajax.BizTalk.DocMan.snk = SolutionItems\Ajax.BizTalk.DocMan.snk
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

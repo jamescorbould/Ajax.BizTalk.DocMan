@@ -223,9 +223,9 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
         public Microsoft.BizTalk.Message.Interop.IBaseMessage Execute(Microsoft.BizTalk.Component.Interop.IPipelineContext pc, Microsoft.BizTalk.Message.Interop.IBaseMessage inmsg)
         {
             // Note: this is a **NON-OPTIMAL** pipeline component to demonstrate how **NOT** to write a pipeline component!!
-            // It uses XDocument to construct an XML message, which is memory intensive for large messages.
-            // It writes the entire output message into a memory stream in one go, which is memory intensive for large messages.
-            // Pipeline execution is blocked while this pipeline component completes processing, which slows processing.
+            // - It uses XDocument and a string to construct an XML message, which is memory intensive for large messages.
+            // - It writes the entire output message into a memory stream in one go, which is memory intensive for large messages.
+            // - Further pipeline execution is blocked while this pipeline component completes processing, which slows processing.
 
             var callToken = TraceManager.PipelineComponent.TraceIn();
 
@@ -246,9 +246,9 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
 
                     xml = System.String.Format(
                             @"<?xml version=""1.0""?>
-                        <Invoice xmlns=""http://Invoice/v1"">
-                            <Base64EncodedStream>{0}</Base64EncodedStream>
-                        </Invoice>"
+                            <Invoice xmlns=""http://Invoice/v1"">
+                                <Base64EncodedStream>{0}</Base64EncodedStream>
+                            </Invoice>"
                             , System.Convert.ToBase64String(bytesOut));
 
                     // This loads the entire XML into memory, into a DOM.  **NOT OPTIMAL**.
@@ -261,9 +261,11 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
                     TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Write base64 encoded binary data to stream.", System.DateTime.Now, callToken));
 
                     Stream ms = new MemoryStream();
-                    BinaryWriter binWriter = new BinaryWriter(ms);
-                    binWriter.Write(xml);
-                    binWriter.Flush();
+                    StreamWriter sw = new StreamWriter(ms, Encoding.ASCII);
+                        
+                    sw.Write(xml);
+                    sw.Flush();
+
                     inmsg.BodyPart.Data = ms;
 
                     // Rewind output stream to the beginning, so it's ready to be read.

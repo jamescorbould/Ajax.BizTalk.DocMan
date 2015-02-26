@@ -27,7 +27,7 @@ namespace Ajax.BizTalk.DocMan.Pipelines
 "</Properties>          <CachedDisplayName>NotStreamingBad</CachedDisplayName>          <CachedIsMana"+
 "ged>true</CachedIsManaged>        </Component>      </Components>    </Stage>  </Stages></Document>";
         
-        private const string _versionDependentGuid = "0227671f-42f6-4462-a6d2-739c852d3a04";
+        private const string _versionDependentGuid = "ddb23dc6-feab-454b-822e-da9f293e2e81";
         
         public SendInvoice()
         {

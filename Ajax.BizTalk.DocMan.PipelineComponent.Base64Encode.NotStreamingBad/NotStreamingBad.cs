@@ -244,6 +244,9 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
                     bytesOut = binReader.ReadBytes((int)inmsg.BodyPart.Data.Length);
                     binReader.Close();
 
+                    TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Create XML string containing base64 encoded data.", System.DateTime.Now, callToken));
+
+                    // This loads the entire XML string into memory.  **NOT OPTIMAL**.
                     xml = System.String.Format(
                             @"<?xml version=""1.0""?>
                             <Invoice xmlns=""http://Invoice/v1"">
@@ -251,14 +254,7 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
                             </Invoice>"
                             , System.Convert.ToBase64String(bytesOut));
 
-                    // This loads the entire XML into memory, into a DOM.  **NOT OPTIMAL**.
-                    TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Load XML into memory.", System.DateTime.Now, callToken));
-
-                    XDocument doc = XDocument.Parse(xml);
-
-                    xml = doc.ToString();
-
-                    TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Write base64 encoded binary data to stream.", System.DateTime.Now, callToken));
+                    TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Write XML string to stream.", System.DateTime.Now, callToken));
 
                     Stream ms = new MemoryStream();
                     StreamWriter sw = new StreamWriter(ms, Encoding.ASCII);
@@ -268,10 +264,10 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
 
                     inmsg.BodyPart.Data = ms;
 
+                    pc.ResourceTracker.AddResource(sw);
+
                     // Rewind output stream to the beginning, so it's ready to be read.
                     inmsg.BodyPart.Data.Position = 0;
-
-                    pc.ResourceTracker.AddResource(ms);
                 }
                 catch (Exception ex)
                 {

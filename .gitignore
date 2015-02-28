@@ -33,3 +33,4 @@
 *.xsd.cs
 bin
 obj
+*.btp.cs

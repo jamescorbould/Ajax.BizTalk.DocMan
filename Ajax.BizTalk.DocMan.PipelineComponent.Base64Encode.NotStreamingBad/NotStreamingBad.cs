@@ -235,7 +235,6 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
             {
                 try
                 {
-                    string xml = string.Empty;
                     byte[] bytesOut = null;
 
                     TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Read message data.", System.DateTime.Now, callToken));
@@ -244,17 +243,18 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
                     bytesOut = binReader.ReadBytes((int)inmsg.BodyPart.Data.Length);
                     binReader.Close();
 
-                    TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Create XML string containing base64 encoded data.", System.DateTime.Now, callToken));
+                    TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Create XML containing base64 encoded data.", System.DateTime.Now, callToken));
 
-                    // This loads the entire XML string into memory.  **NOT OPTIMAL**.
-                    xml = System.String.Format(
+                    // This loads the entire XML into memory, into a DOM.  **NOT OPTIMAL**.
+                    XDocument xml = XDocument.Parse(
+                        System.String.Format(
                             @"<?xml version=""1.0""?>
                             <Invoice xmlns=""http://Invoice/v1"">
                                 <Base64EncodedStream>{0}</Base64EncodedStream>
                             </Invoice>"
-                            , System.Convert.ToBase64String(bytesOut));
+                            , System.Convert.ToBase64String(bytesOut)));
 
-                    TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Write XML string to stream.", System.DateTime.Now, callToken));
+                    TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Write XML to stream.", System.DateTime.Now, callToken));
 
                     Stream ms = new MemoryStream();
                     StreamWriter sw = new StreamWriter(ms, Encoding.ASCII);

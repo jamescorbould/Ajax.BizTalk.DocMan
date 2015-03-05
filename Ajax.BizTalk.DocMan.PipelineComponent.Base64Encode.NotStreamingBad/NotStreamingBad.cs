@@ -231,6 +231,9 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
 
             TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - START NotStreamingBad pipeline component.", System.DateTime.Now, callToken));
 
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             if (Enabled)
             {
                 try
@@ -276,7 +279,11 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
                 }
             }
 
+            stopwatch.Stop();
+
+            TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Stopwatch elapsed time = {2}", System.DateTime.Now, callToken, stopwatch.Elapsed));
             TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - END - NotStreamingBad pipeline component.  Return.", System.DateTime.Now, callToken));
+            TraceManager.PipelineComponent.TraceOut();
 
             return inmsg;
         }

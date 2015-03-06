@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		SolutionItems\Ajax.BizTalk.DocMan.snk = SolutionItems\Ajax.BizTalk.DocMan.snk
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.StreamingGood", "Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.StreamingGood\Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.StreamingGood.csproj", "{B9A47860-58FF-42AF-A92F-D259901BF9A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{4EE3F58D-843C-4828-8680-E2137A1736B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EE3F58D-843C-4828-8680-E2137A1736B4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4EE3F58D-843C-4828-8680-E2137A1736B4}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B9A47860-58FF-42AF-A92F-D259901BF9A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9A47860-58FF-42AF-A92F-D259901BF9A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9A47860-58FF-42AF-A92F-D259901BF9A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9A47860-58FF-42AF-A92F-D259901BF9A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

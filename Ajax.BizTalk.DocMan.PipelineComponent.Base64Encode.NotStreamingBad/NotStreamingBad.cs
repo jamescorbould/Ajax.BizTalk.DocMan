@@ -252,9 +252,9 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
                     XDocument xml = XDocument.Parse(
                         System.String.Format(
                             @"<?xml version=""1.0""?>
-                            <Invoice xmlns=""http://Invoice/v1"">
+                            <ns0:Invoice xmlns:ns0=""http://Invoice/v1"" MinorVersion=""1.0"">
                                 <Base64EncodedStream>{0}</Base64EncodedStream>
-                            </Invoice>"
+                            </ns0:Invoice>"
                             , System.Convert.ToBase64String(bytesOut)));
 
                     TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Write XML to stream.", System.DateTime.Now, callToken));

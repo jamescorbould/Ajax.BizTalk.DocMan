@@ -42,6 +42,9 @@
     <Reference Include="Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.NotStreamingBad">
       <HintPath>..\..\..\..\Program Files (x86)\Microsoft BizTalk Server 2013 R2\Pipeline Components\Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.NotStreamingBad.dll</HintPath>
     </Reference>
+    <Reference Include="Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.StreamingGood">
+      <HintPath>..\..\..\..\Program Files (x86)\Microsoft BizTalk Server 2013 R2\Pipeline Components\Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.StreamingGood.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.BizTalk.Pipeline.Components, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System">
       <Name>System</Name>
@@ -88,6 +91,13 @@
       <Project>{b08a8ea1-affa-4dba-b376-89a035b7a9a6}</Project>
       <Name>Ajax.BizTalk.DocMan.Schemas.External</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Pipeline Include="SendInvoiceGood.btp">
+      <TypeName>SendInvoiceGood</TypeName>
+      <Namespace>Ajax.BizTalk.DocMan.Pipelines</Namespace>
+      <SubType>Task</SubType>
+    </Pipeline>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\BizTalk\BizTalkC.targets" />

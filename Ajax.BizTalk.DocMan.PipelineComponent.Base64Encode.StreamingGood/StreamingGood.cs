@@ -187,10 +187,16 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
         /// </remarks>
         public Microsoft.BizTalk.Message.Interop.IBaseMessage Execute(Microsoft.BizTalk.Component.Interop.IPipelineContext pc, Microsoft.BizTalk.Message.Interop.IBaseMessage inmsg)
         {
-            // 
-            // TODO: implement component logic
-            // 
-            // this way, it's a passthrough pipeline component
+            Stream bodyPartStream = inmsg.BodyPart.GetOriginalDataStream();
+            Base64EncoderStream newStream = new Base64EncoderStream(bodyPartStream);
+
+            inmsg.BodyPart.Data = newStream;
+
+            pc.ResourceTracker.AddResource(newStream);
+
+            // Rewind output stream to the beginning, so it's ready to be read.
+            inmsg.BodyPart.Data.Position = 0;
+
             return inmsg;
         }
         #endregion

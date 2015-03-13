@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.BizTalk.CAT.BestPractices.Framework, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a2983d852cbaa911, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Microsoft.BizTalk.CAT.BestPractices.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Biztalk.Messaging, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.BizTalk.Pipeline, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.BizTalk.Streaming, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -43,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base64EncoderStream.cs" />
     <Compile Include="StreamingGood.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

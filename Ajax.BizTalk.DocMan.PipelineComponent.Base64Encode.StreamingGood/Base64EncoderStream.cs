@@ -32,9 +32,7 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
         {
             TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Called Read method on Base64EncoderStream class.xx", System.DateTime.Now, this.callToken));
 
-            // Convert buffer byte[] to base64 string then convert back to byte[].
-            //var bytesread = base.Read(Convert.FromBase64String(Convert.ToBase64String(buffer)), offset, count);
-            var bytesread = this.s.Read(buffer, offset, count);
+            var bytesread = this.s.Read(Convert.FromBase64String(Convert.ToBase64String(buffer)), offset, count);
 
             return bytesread;
         }

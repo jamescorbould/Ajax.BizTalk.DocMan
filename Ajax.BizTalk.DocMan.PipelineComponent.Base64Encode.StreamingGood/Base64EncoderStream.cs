@@ -14,7 +14,7 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
         private Guid callToken { get; set; }
         private VirtualStream s { get; set; }
         public override long Position { get; set; }
-        public override long Length { get { return 0; } }
+        public override long Length { get { return this.s.Length; } }
         public override bool CanWrite { get { return false; } }
         public override bool CanSeek { get { return true; } }
         public override bool CanRead { get { return true; } }
@@ -41,22 +41,22 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
 
         public override void SetLength(long value)
         {
-            throw new NotImplementedException();
+            this.s.SetLength(value);
         }
 
         public override void Flush()
         {
-            throw new NotImplementedException();
+            this.s.Flush();
         }
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            throw new NotImplementedException();
+            return this.s.Seek(offset, origin);
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            throw new NotImplementedException();
+            this.s.Write(buffer, offset, count);
         }
     }
 }

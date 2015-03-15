@@ -30,9 +30,12 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Called Read method on Base64EncoderStream class.xx", System.DateTime.Now, this.callToken));
+            TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Called Read method on Base64EncoderStream class.", System.DateTime.Now, this.callToken));
 
-            var bytesread = this.s.Read(Convert.FromBase64String(Convert.ToBase64String(buffer)), offset, count);
+            string base64 = Convert.ToBase64String(buffer);
+            byte[] bytes = Convert.FromBase64String(base64);
+
+            var bytesread = this.s.Read(bytes, 0, bytes.Length);
 
             return bytesread;
         }

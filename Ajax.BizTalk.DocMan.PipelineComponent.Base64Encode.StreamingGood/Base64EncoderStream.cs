@@ -11,86 +11,89 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
 {
     public class Base64EncoderStream : Stream, IDisposable
     {
-        private Guid callToken { get; set; }
-        private VirtualStream s { get; set; }
-        private byte[] bufferedBytes { get; set; }
-        private int bufferedBytesCount { get; set; }
-        private int bytesNumCopiedAlready { get; set; }
+        private Guid _callToken { get; set; }
+        private VirtualStream _vs { get; set; }
+        private List<char> _bufferedBase64Chars { get; set; }
+        private int _bufferedBase64CharsCount { get; set; }
+        private int _bytesNumCopiedAlready { get; set; }
         private const int BUFFER_SIZE = 4096;
         public override long Position { get; set; }
-        public override long Length { get { return this.s.Length; } }
+        public override long Length { get { return this._vs.Length; } }
         public override bool CanWrite { get { return false; } }
         public override bool CanSeek { get { return true; } }
         public override bool CanRead { get { return true; } }
 
         public Base64EncoderStream(Stream s)
         {
-            this.s = new VirtualStream(VirtualStream.MemoryFlag.AutoOverFlowToDisk);
-            s.CopyTo(this.s);
-            this.callToken = TraceManager.CustomComponent.TraceIn();
-            bufferedBytes = new byte[0];
-            bytesNumCopiedAlready = 0;
-            bufferedBytesCount = 0;
+            _vs = new VirtualStream(VirtualStream.MemoryFlag.AutoOverFlowToDisk);
+            s.CopyTo(_vs);
+            _callToken = TraceManager.CustomComponent.TraceIn();
+            _bufferedBase64Chars = new List<char>();
+            _bytesNumCopiedAlready = 0;
+            _bufferedBase64CharsCount = 0;
 
-            TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Called constructor on Base64EncoderStream class.", System.DateTime.Now, this.callToken));
+            TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Called constructor on Base64EncoderStream class.", System.DateTime.Now, _callToken));
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Called Read method on Base64EncoderStream class.", System.DateTime.Now, this.callToken));
+            TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Called Read method on Base64EncoderStream class.", System.DateTime.Now, _callToken));
 
-            var countBytesRead = this.s.Read(buffer, offset, count);
-
+            var countBytesRead = _vs.Read(buffer, offset, count);
             byte[] bytesRead = new byte[countBytesRead];
+            string base64Read = String.Empty;
+            int countBytesWritten = 0;
 
             Array.Copy(buffer, bytesRead, countBytesRead);
 
-            string base64 = Convert.ToBase64String(bytesRead);
-            byte[] base64EncodedAsBytes = System.Text.Encoding.ASCII.GetBytes(base64);
+            base64Read = Convert.ToBase64String(bytesRead);
 
-            int encodedBytesCount = base64EncodedAsBytes.Count();
-
-            if (encodedBytesCount > BUFFER_SIZE)
+            // Check if any pre-existing bytes exist in the local buffer from previous reads.
+            // These need to be written to the output buffer first.
+            // 1 char == 1 byte.
+            if(_bufferedBase64CharsCount > 0)
             {
-                int countOfOverflowBytes = (base64EncodedAsBytes.Count() - BUFFER_SIZE);
-
-                byte[] tempBytes = new byte[this.bufferedBytes.Count() + countOfOverflowBytes];
-
-                Array.Copy(bufferedBytes, tempBytes, this.bufferedBytes.Count());
-
-                this.bufferedBytes = new byte[bufferedBytesCount + countOfOverflowBytes];
-
-                Array.Copy(tempBytes, this.bufferedBytes, tempBytes.Count());
-                Array.Copy(base64EncodedAsBytes, BUFFER_SIZE, this.bufferedBytes, tempBytes.Count(), countOfOverflowBytes);
-
-                bufferedBytesCount = this.bufferedBytes.Count();
-
-                encodedBytesCount = BUFFER_SIZE;
+                int length = Math.Min(BUFFER_SIZE, _bufferedBase64CharsCount);
+                Array.Copy(System.Text.Encoding.ASCII.GetBytes(_bufferedBase64Chars.ToArray<char>()), buffer, length);
+                _bufferedBase64Chars.RemoveRange(0, length);
+                _bufferedBase64CharsCount = _bufferedBase64Chars.Count();
+                countBytesWritten += length;
             }
 
-            Array.Copy(base64EncodedAsBytes, 0, buffer, 0, encodedBytesCount);
+            int bufferSpaceLeft = BUFFER_SIZE - countBytesWritten;
+            
+            // Check and write any overflow from **this** read to the local buffer.
+            if (base64Read.Count() > bufferSpaceLeft)
+            {
+                _bufferedBase64Chars.AddRange(base64Read.ToList<char>().GetRange(bufferSpaceLeft, base64Read.Count()));
+                base64Read.Remove(bufferSpaceLeft, base64Read.Count());
+            }
 
-            return encodedBytesCount;
+            // Write bytes from **this** read, if any bytes can fit in the output buffer.
+            Array.Copy(System.Text.Encoding.ASCII.GetBytes(base64Read.ToArray<char>()), buffer, base64Read.Length);
+            countBytesWritten += base64Read.Length;
+
+            return countBytesWritten;
         }
 
         public override void SetLength(long value)
         {
-            this.s.SetLength(value);
+            _vs.SetLength(value);
         }
 
         public override void Flush()
         {
-            this.s.Flush();
+            _vs.Flush();
         }
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            return this.s.Seek(offset, origin);
+            return _vs.Seek(offset, origin);
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            this.s.Write(buffer, offset, count);
+            _vs.Write(buffer, offset, count);
         }
     }
 }

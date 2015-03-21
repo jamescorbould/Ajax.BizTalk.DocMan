@@ -67,6 +67,7 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
             {
                 _bufferedBase64Chars.AddRange(base64Read.ToList<char>().GetRange(bufferSpaceLeft, (base64Read.Count() - bufferSpaceLeft)));
                 base64Read = base64Read.Remove(bufferSpaceLeft, (base64Read.Count() - bufferSpaceLeft));
+                _bufferedBase64CharsCount = _bufferedBase64Chars.Count();
             }
 
             // Write bytes from **this** read, if any bytes can fit in the output buffer.

@@ -48,9 +48,14 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
 
             base64Read = Convert.ToBase64String(bytesRead);
 
+            TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Count of bytes read from stream = {2}", System.DateTime.Now, _callToken, countBytesRead));
+
             // Check if any pre-existing bytes exist in the local buffer from previous reads.
             // These need to be written to the output buffer first.
             // 1 char == 1 byte.
+
+            TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Number of bytes in local buffer = {2}", System.DateTime.Now, _callToken, _bufferedBase64CharsCount));
+
             if(_bufferedBase64CharsCount > 0)
             {
                 int length = Math.Min(BUFFER_SIZE, _bufferedBase64CharsCount);
@@ -58,14 +63,19 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
                 _bufferedBase64Chars.RemoveRange(0, length);
                 _bufferedBase64CharsCount = _bufferedBase64Chars.Count();
                 countBytesWritten += length;
+
+                TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Wrote {2} to local buffer.", System.DateTime.Now, _callToken, countBytesWritten));
             }
 
             int bufferSpaceLeft = BUFFER_SIZE - countBytesWritten;
+
+            TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Space left in buffer = {2}", System.DateTime.Now, _callToken, bufferSpaceLeft));
             
             // Check and write any overflow from **this** read to the local buffer.
             if (base64Read.Count() > bufferSpaceLeft)
             {
                 _bufferedBase64Chars.AddRange(base64Read.ToList<char>().GetRange(bufferSpaceLeft, (base64Read.Count() - bufferSpaceLeft)));
+                TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Wrote to buffer.  Start index = {2}; end index = {3}", System.DateTime.Now, _callToken, bufferSpaceLeft, (base64Read.Count() - bufferSpaceLeft)));
                 base64Read = base64Read.Remove(bufferSpaceLeft, (base64Read.Count() - bufferSpaceLeft));
                 _bufferedBase64CharsCount = _bufferedBase64Chars.Count();
             }
@@ -73,6 +83,8 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
             // Write bytes from **this** read, if any bytes can fit in the output buffer.
             Array.Copy(System.Text.Encoding.ASCII.GetBytes(base64Read.ToArray<char>()), buffer, base64Read.Length);
             countBytesWritten += base64Read.Length;
+
+            TraceManager.CustomComponent.TraceInfo(string.Format("{0} - {1} - Count of bytes written = {2}", System.DateTime.Now, _callToken, countBytesWritten));
 
             return countBytesWritten;
         }

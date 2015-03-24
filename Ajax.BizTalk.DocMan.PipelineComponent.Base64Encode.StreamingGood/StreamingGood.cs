@@ -14,6 +14,7 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
     using Microsoft.BizTalk.Component;
     using Microsoft.BizTalk.Messaging;
     using Microsoft.BizTalk.Streaming;
+    using Microsoft.BizTalk.CAT.BestPractices.Framework.Instrumentation;
     
     
     [ComponentCategory(CategoryTypes.CATID_PipelineComponent)]
@@ -23,6 +24,7 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
     {
         
         private System.Resources.ResourceManager resourceManager = new System.Resources.ResourceManager("Ajax.BizTalk.DocMan.PipelineComponent.StreamingGood", Assembly.GetExecutingAssembly());
+        private bool enabled = true;
         
         #region IBaseComponent members
         /// <summary>
@@ -60,6 +62,15 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
                 return resourceManager.GetString("COMPONENTDESCRIPTION", System.Globalization.CultureInfo.InvariantCulture);
             }
         }
+
+        /// <summary>
+        /// Switch determining if the component is enabled or not.
+        /// </summary>
+        public bool Enabled
+        {
+            get { return enabled; }
+            set { enabled = value; }
+        }
         #endregion
         
         #region IPersistPropertyBag members
@@ -88,6 +99,28 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
         /// <param name="errlog">Error status</param>
         public virtual void Load(Microsoft.BizTalk.Component.Interop.IPropertyBag pb, int errlog)
         {
+            object val = null;
+
+            try
+            {
+                pb.Read("Enabled", out val, 0);
+            }
+            catch (System.ArgumentException)
+            {
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error reading propertybag: " + ex.Message);
+            }
+
+            if (val != null)
+            {
+                Enabled = (bool)val;
+            }
+            else
+            {
+                Enabled = true;
+            }
         }
         
         /// <summary>
@@ -98,6 +131,8 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
         /// <param name="fSaveAllProperties">not used</param>
         public virtual void Save(Microsoft.BizTalk.Component.Interop.IPropertyBag pb, bool fClearDirty, bool fSaveAllProperties)
         {
+            object val = (object)Enabled;
+            WritePropertyBag(pb, "Enabled", val);
         }
         
         #region utility functionality
@@ -187,15 +222,38 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
         /// </remarks>
         public Microsoft.BizTalk.Message.Interop.IBaseMessage Execute(Microsoft.BizTalk.Component.Interop.IPipelineContext pc, Microsoft.BizTalk.Message.Interop.IBaseMessage inmsg)
         {
-            Stream bodyPartStream = inmsg.BodyPart.GetOriginalDataStream();
-            Base64EncoderStream newStream = new Base64EncoderStream(bodyPartStream);
+            var callToken = TraceManager.PipelineComponent.TraceIn();
+            TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - START StreamingGood pipeline component.", System.DateTime.Now, callToken));
 
-            inmsg.BodyPart.Data = newStream;
+            if (Enabled)
+            {
+                try
+                {
+                    Stream bodyPartStream = inmsg.BodyPart.GetOriginalDataStream();
+                    Base64EncoderStream newStream = new Base64EncoderStream(bodyPartStream);
 
-            pc.ResourceTracker.AddResource(newStream);
+                    inmsg.BodyPart.Data = newStream;
 
-            // Rewind output stream to the beginning, so it's ready to be read.
-            inmsg.BodyPart.Data.Position = 0;
+                    pc.ResourceTracker.AddResource(newStream);
+
+                    // Rewind output stream to the beginning, so it's ready to be read.
+                    inmsg.BodyPart.Data.Position = 0;
+                }
+                catch (Exception ex)
+                {
+                    TraceManager.PipelineComponent.TraceError(ex, true, callToken);
+
+                    if (inmsg != null)
+                    {
+                        inmsg.SetErrorInfo(ex);
+                    }
+
+                    throw;
+                }
+            }
+
+            TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - END - StreamingGood pipeline component.  Return.", System.DateTime.Now, callToken));
+            TraceManager.PipelineComponent.TraceOut(callToken);
 
             return inmsg;
         }

@@ -275,6 +275,12 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
                 catch (Exception ex)
                 {
                     TraceManager.PipelineComponent.TraceError(ex, true, callToken);
+                    
+                    if (inmsg != null)
+                    {
+                        inmsg.SetErrorInfo(ex);
+                    }
+
                     throw;
                 }
             }

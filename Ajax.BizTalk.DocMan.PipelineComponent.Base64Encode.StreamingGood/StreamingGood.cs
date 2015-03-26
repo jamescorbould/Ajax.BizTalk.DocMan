@@ -225,6 +225,9 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
             var callToken = TraceManager.PipelineComponent.TraceIn();
             TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - START StreamingGood pipeline component.", System.DateTime.Now, callToken));
 
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             if (Enabled)
             {
                 try
@@ -252,6 +255,9 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
                 }
             }
 
+            stopwatch.Stop();
+
+            TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - Stopwatch elapsed time = {2}", System.DateTime.Now, callToken, stopwatch.Elapsed));
             TraceManager.PipelineComponent.TraceInfo(string.Format("{0} - {1} - END - StreamingGood pipeline component.  Return.", System.DateTime.Now, callToken));
             TraceManager.PipelineComponent.TraceOut(callToken);
 

@@ -39,12 +39,6 @@
     <AssemblyOriginatorKeyFile>..\SolutionItems\Ajax.BizTalk.DocMan.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.NotStreamingBad">
-      <HintPath>..\..\..\..\Program Files (x86)\Microsoft BizTalk Server 2013 R2\Pipeline Components\Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.NotStreamingBad.dll</HintPath>
-    </Reference>
-    <Reference Include="Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.StreamingGood">
-      <HintPath>..\..\..\..\Program Files (x86)\Microsoft BizTalk Server 2013 R2\Pipeline Components\Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.StreamingGood.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.BizTalk.Pipeline.Components, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System">
       <Name>System</Name>
@@ -87,6 +81,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.NotStreamingBad\Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.NotStreamingBad.csproj">
+      <Project>{4a638650-2269-471d-952c-f7e88b28e2d6}</Project>
+      <Name>Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.NotStreamingBad</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.StreamingGood\Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.StreamingGood.csproj">
+      <Project>{b9a47860-58ff-42af-a92f-d259901bf9a8}</Project>
+      <Name>Ajax.BizTalk.DocMan.PipelineComponent.Base64Encode.StreamingGood</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ajax.BizTalk.DocMan\Ajax.BizTalk.DocMan.Schemas.External.btproj">
       <Project>{b08a8ea1-affa-4dba-b376-89a035b7a9a6}</Project>
       <Name>Ajax.BizTalk.DocMan.Schemas.External</Name>

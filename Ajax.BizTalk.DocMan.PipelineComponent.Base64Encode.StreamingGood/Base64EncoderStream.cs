@@ -23,9 +23,18 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
         public override bool CanSeek { get { return true; } }
         public override bool CanRead { get { return true; } }
 
-        public Base64EncoderStream(Stream s)
+        public Base64EncoderStream(Stream s, int? bufferSize)
         {
-            _vs = new VirtualStream(VirtualStream.MemoryFlag.AutoOverFlowToDisk);
+            if (bufferSize == null)
+            {
+                // Default buffer size for VirtualStream is 10240 bytes.
+                _vs = new VirtualStream(VirtualStream.MemoryFlag.AutoOverFlowToDisk);
+            }
+            else
+            {
+                _vs = new VirtualStream(Convert.ToInt32(bufferSize), VirtualStream.MemoryFlag.AutoOverFlowToDisk);
+            }
+
             s.CopyTo(_vs);
             _callToken = TraceManager.CustomComponent.TraceIn();
             _bufferedBase64Chars = new List<char>();

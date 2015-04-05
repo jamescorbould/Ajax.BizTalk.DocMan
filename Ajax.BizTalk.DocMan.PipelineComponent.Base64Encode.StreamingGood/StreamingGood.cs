@@ -25,6 +25,7 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
         
         private System.Resources.ResourceManager resourceManager = new System.Resources.ResourceManager("Ajax.BizTalk.DocMan.PipelineComponent.StreamingGood", Assembly.GetExecutingAssembly());
         private bool enabled = true;
+        private int bufferSizeBytes = 10240;
         
         #region IBaseComponent members
         /// <summary>
@@ -70,6 +71,15 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
         {
             get { return enabled; }
             set { enabled = value; }
+        }
+
+        /// <summary>
+        /// Buffer size.
+        /// </summary>
+        public int BufferSizeBytes
+        {
+            get { return bufferSizeBytes; }
+            set { bufferSizeBytes = value; }
         }
         #endregion
         
@@ -121,6 +131,27 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
             {
                 Enabled = true;
             }
+
+            try
+            {
+                pb.Read("BufferSizeBytes", out val, 0);
+            }
+            catch (System.ArgumentException)
+            {
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error reading propertybag: " + ex.Message);
+            }
+
+            if (val != null)
+            {
+                BufferSizeBytes = (int)val;
+            }
+            else
+            {
+                BufferSizeBytes = 10240;
+            }
         }
         
         /// <summary>
@@ -133,6 +164,9 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
         {
             object val = (object)Enabled;
             WritePropertyBag(pb, "Enabled", val);
+
+            val = (object)BufferSizeBytes;
+            WritePropertyBag(pb, "BufferSizeBytes", val);
         }
         
         #region utility functionality
@@ -233,7 +267,7 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
                 try
                 {
                     Stream bodyPartStream = inmsg.BodyPart.GetOriginalDataStream();
-                    Base64EncoderStream newStream = new Base64EncoderStream(bodyPartStream);
+                    Base64EncoderStream newStream = new Base64EncoderStream(bodyPartStream, BufferSizeBytes);
 
                     inmsg.BodyPart.Data = newStream;
 

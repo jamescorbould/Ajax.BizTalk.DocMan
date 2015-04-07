@@ -28,11 +28,13 @@ namespace Ajax.BizTalk.DocMan.PipelineComponent
             if (bufferSize == null)
             {
                 // Default buffer size for VirtualStream is 10240 bytes.
-                _vs = new VirtualStream(VirtualStream.MemoryFlag.AutoOverFlowToDisk);
+                // This constructor will default to use VirtualStream.MemoryFlag.AutoOverFlowToDisk enum value.
+                _vs = new VirtualStream();
             }
             else
             {
-                _vs = new VirtualStream(Convert.ToInt32(bufferSize), VirtualStream.MemoryFlag.AutoOverFlowToDisk);
+                // This constructor will default to use VirtualStream.MemoryFlag.AutoOverFlowToDisk enum value.
+                _vs = new VirtualStream(Convert.ToInt32(bufferSize), Convert.ToInt32(bufferSize));
             }
 
             s.CopyTo(_vs);
